@@ -3,6 +3,7 @@ const app = express();
 import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
+import routes from "./routes/homeRoutes.js";
 
 // Puerto
 const PORT = process.env.PORT;
@@ -12,15 +13,13 @@ const MONGO_URI = process.env.MONGO_URI;
 app.use(json());
 
 // Conexión a MongoDB Atlas
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Conectado a MongoDB Atlas"))
-  .catch((err) => console.error("❌ Error al conectar a MongoDB:", err));
+// mongoose
+//   .connect(process.env.MONGO_URI)
+//   .then(() => console.log("✅ Conectado a MongoDB Atlas"))
+//   .catch((err) => console.error("❌ Error al conectar a MongoDB:", err));
 
-// Ruta básica
-app.get("/", (req, res) => {
-  res.send("Servidor funcionando correctamente 🚀");
-});
+// Usa las rutas (se importan todas desde index.js)
+app.use("/", routes);
 
 // Iniciar servidor
 app.listen(PORT, () => {
