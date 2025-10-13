@@ -10,8 +10,8 @@ userRoutes.get("/:id", (req, res) => {
   res.send(`Detalles del User con ID: ${req.params.id}`);
 });
 
-userRoutes.post("/", (req, res) => {
-  res.send(`Agrega nuevo User ${req}`);
+userRoutes.post("/:id", (req, res) => {
+  res.send(`Agrega nuevo User ${req} ${req.params.id}`);
 });
 
 userRoutes.put("/:id", (req, res) => {
