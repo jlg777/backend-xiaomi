@@ -5,7 +5,7 @@ import userRoutes from "./userRoutes.js";
 const router = Router();
 
 // Ruta básica
-router.get("/", (req, res) => {
+router.get("/", (_req, res) => {
   res.send("Servidor funcionando correctamente 🚀");
 });
 
