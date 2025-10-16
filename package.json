@@ -1,7 +1,7 @@
 {
   "name": "backend-xiaomi",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend para tienda Xiaomi usando Express y MongoDB",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -13,9 +13,9 @@
     "type": "git",
     "url": "git+https://github.com/jlg777/backend-xiaomi.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["express", "xiaomi", "api", "backend", "mongodb"],
+  "author": "Jorge Grandia <proyectojlg777@gmail.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/jlg777/backend-xiaomi/issues"
   },
