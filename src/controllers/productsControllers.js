@@ -1,19 +1,61 @@
-export const getAllProducts = (_req, res) => {
-  res.send("Listado de Productos 🥸");
+import { products } from "../mockData/products.js";
+import Product from "../models/productModel.js";
+
+export const getAllProducts = async (_req, res) => {
+  try {
+    //const products = await Product.find();
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener productos 😵‍💫" });
+  }
 };
 
-export const getProductById = (req, res) => {
-  res.send(`Detalles del producto con ID: ${req.params.id}`);
+export const getProductById = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product)
+      return res.status(404).json({ error: "Producto no encontrado 😵‍💫" });
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener el producto 😵‍💫" });
+  }
 };
 
-export const createProduct = (req, res) => {
-  res.send(`Agrega nuevo producto ${req}`);
+export const createProduct = async (req, res) => {
+  try {
+    const newProduct = new Product(req.body);
+    const saved = await newProduct.save();
+    res.status(201).json(saved);
+  } catch (error) {
+    res
+      .status(400)
+      .json({ error: "Error al crear el producto 😵‍💫", details: error.message });
+  }
 };
 
-export const updateProduct = (req, res) => {
-  res.send(`Edita del producto con ID: ${req.params.id} y ${req}`);
+export const updateProduct = async (req, res) => {
+  try {
+    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!updated)
+      return res.status(404).json({ error: "Producto no encontrado 😵‍💫" });
+    res.json(updated);
+  } catch (error) {}
+  res.status(400).json({
+    error: "Error al actualizar el producto 😵‍💫",
+    details: error.message,
+  });
 };
 
-export const deleteProduct = (req, res) => {
-  res.send(`Borra del producto con ID: ${req.params.id}`);
+export const deleteProduct = async (req, res) => {
+  try {
+    const deleted = await Product.findByIdAndDelete(req.params.id);
+    if (!deleted)
+      return res.status(404).json({ error: "Producto no encontrado 😵‍💫" });
+    res.json({ message: "Producto eliminado correctamente 😵‍💫" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al eliminar el producto 😵‍💫" });
+  }
 };
