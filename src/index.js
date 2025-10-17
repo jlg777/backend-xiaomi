@@ -2,12 +2,12 @@ import express, { json } from "express";
 const app = express();
 import dotenv from "dotenv";
 dotenv.config();
-import mongoose from "mongoose";
+//import mongoose from "mongoose";
 import routes from "./routes/homeRoutes.js";
 
 // Puerto
 const PORT = process.env.PORT;
-const MONGO_URI = process.env.MONGO_URI;
+//const MONGO_URI = process.env.MONGO_URI;
 
 // Middleware (opcional para parsear JSON)
 app.use(json());
