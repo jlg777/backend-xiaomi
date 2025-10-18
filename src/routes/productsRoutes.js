@@ -1,25 +1,22 @@
 import { Router } from "express";
+import {
+  createProduct,
+  deleteProduct,
+  getAllProducts,
+  getProductById,
+  updateProduct,
+} from "../controllers/productsControllers.js";
 
 const productsRoutes = Router();
 
-productsRoutes.get("/", (_req, res) => {
-  res.send("Listado de Productos 🥸");
-});
+productsRoutes.get("/", getAllProducts);
 
-productsRoutes.get("/:id", (req, res) => {
-  res.send(`Detalles del producto con ID: ${req.params.id}`);
-});
+productsRoutes.get("/:id", getProductById);
 
-productsRoutes.post("/", (req, res) => {
-  res.send(`Agrega nuevo producto ${req}`);
-});
+productsRoutes.post("/", createProduct);
 
-productsRoutes.put("/:id", (req, res) => {
-  res.send(`Edita del producto con ID: ${req.params.id} y ${req}`);
-});
+productsRoutes.put("/:id", updateProduct);
 
-productsRoutes.delete("/:id", (req, res) => {
-  res.send(`Borra del producto con ID: ${req.params.id}`);
-});
+productsRoutes.delete("/:id", deleteProduct);
 
 export default productsRoutes;

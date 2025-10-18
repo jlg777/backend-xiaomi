@@ -1,31 +1,46 @@
 {
   "name": "backend-xiaomi",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend para tienda Xiaomi usando Express y MongoDB",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/index.js"
+    "start": "nodemon src/index.js",
+    "commit": "npx gitmoji -c",
+    "lint": "eslint \"src/**/*.js\"",
+    "lint:fix": "eslint \"src/**/*.js\" --fix",
+    "format": "prettier --write \"src/**/*.js\""
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jlg777/backend-xiaomi.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "express",
+    "xiaomi",
+    "api",
+    "backend",
+    "mongodb"
+  ],
+  "author": "Jorge Grandia <proyectojlg777@gmail.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/jlg777/backend-xiaomi/issues"
   },
   "homepage": "https://github.com/jlg777/backend-xiaomi#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "5.1.0",
     "mongodb": "^6.20.0",
     "mongoose": "^8.19.0"
   },
   "devDependencies": {
-    "nodemon": "3.1.10"
+    "@eslint/js": "^9.37.0",
+    "eslint": "^9.37.0",
+    "globals": "^16.4.0",
+    "nodemon": "3.1.10",
+    "prettier": "3.6.2"
   }
 }
