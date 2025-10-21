@@ -16,10 +16,10 @@ const PORT = process.env.PORT;
 app.use(json());
 
 // Conexión a MongoDB Atlas
- mongoose
-   .connect(process.env.MONGO_URI)
-   .then(() => console.log("✅ Conectado a MongoDB Atlas"))
-   .catch((err) => console.error("❌ Error al conectar a MongoDB:", err));
+mongoose
+  .connect("mongodb://localhost:27017")
+  .then(() => console.log("✅ Conectado a MongoDB Atlas"))
+  .catch((err) => console.error("❌ Error al conectar a MongoDB:", err));
 
 // Usa las rutas (se importan todas desde index.js)
 app.use("/", routes);
