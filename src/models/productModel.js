@@ -11,7 +11,13 @@ const productSchema = new mongoose.Schema({
     minlength: 3,
     maxlength: 100,
   },
-  image: { type: String, trim: true, required: false },
+  image: {
+    type: String,
+    trim: true,
+    required: false,
+    default:
+      "https://media.istockphoto.com/id/1204457395/es/vector/no-hay-icono-de-se%C3%B1al-dise%C3%B1o-vectorial-de-c%C3%ADrculo-cruzado-rojo.jpg?s=1024x1024&w=is&k=20&c=77DioSexSmTy5Lr5jKbeJTGmeit-OcgAKNlXdykvvUk=",
+  },
   price: {
     type: Number,
     required: true,
@@ -20,9 +26,13 @@ const productSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    trim: true,
-    minlength: 3,
-    maxlength: 50,
+    enum: [
+      "Smartphones",
+      "Wearables",
+      "Accessories",
+      "Home Appliances",
+      "Electronics",
+    ],
   },
   description: {
     type: String,
@@ -35,6 +45,15 @@ const productSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+productSchema.pre("validate", function (next) {
+  if (this.isModified("image")) {
+    if (this.image === null || String(this.image).trim() === "") {
+      this.image = undefined;
+    }
+  }
+  next();
 });
 
 const Product = mongoose.model("product", productSchema);
