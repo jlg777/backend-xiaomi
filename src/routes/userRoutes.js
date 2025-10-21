@@ -4,6 +4,7 @@ import {
   deleteUser,
   getAllUsers,
   getUserById,
+  loginUser,
   updateUser,
 } from "../controllers/userControllers.js";
 
@@ -13,10 +14,12 @@ userRoutes.get("/", getAllUsers);
 
 userRoutes.get("/:id", getUserById);
 
-userRoutes.post("/:id", createUser);
+userRoutes.post("/", createUser);
 
 userRoutes.put("/:id", updateUser);
 
 userRoutes.delete("/:id", deleteUser);
+
+userRoutes.post("/login", loginUser);
 
 export default userRoutes;

@@ -39,6 +39,10 @@ const userSchema = new mongoose.Schema({
       message: (props) => `${props.value} no es un correo electrónico válido.`,
     },
   },
+  password: {
+    type: String,
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
