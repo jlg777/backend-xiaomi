@@ -1,4 +1,9 @@
 import User from "../models/userModel.js";
+import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+dotenv.config();
+
+const saltRounds = parseInt(process.env.SALT_ROUND_HASH);
 
 export const getAllUsers = async (_req, res) => {
   try {
@@ -24,9 +29,16 @@ export const getUserById = async (req, res) => {
 
 export const createUser = async (req, res) => {
   try {
-    const newUser = new User(req.body);
+    const { password, ...rest } = req.body;
+    if (!password) {
+      res.status(400).json({ error: "La contraseña es obligatoria 🔑" });
+    }
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const newUser = new User({ ...rest, password: hashedPassword });
     const saved = await newUser.save();
-    res.status(200).json(saved);
+    const { password: _, ...userWithoutPassword } = saved.toObject();
+    res.status(200).json(userWithoutPassword);
   } catch (error) {
     console.error(error);
     res
@@ -74,7 +86,17 @@ export const loginUser = async (req, res) => {
         .status(401)
         .json({ message: "Correo o contraseña incorrectos" });
     }
-    res.status(200).json(user);
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res
+        .status(401)
+        .json({ message: "Correo o contraseña incorrectos" });
+    }
+
+    const { password: _, ...userWithoutPassword } = user.toObject();
+    res.status(200).json(userWithoutPassword);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error en el servidor al iniciar sesión" });
