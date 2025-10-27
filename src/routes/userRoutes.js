@@ -7,18 +7,20 @@ import {
   loginUser,
   updateUser,
 } from "../controllers/userControllers.js";
+import auth from "../middleware/auth.js";
+import authorize from "../middleware/role.js";
 
 const userRoutes = Router();
 
-userRoutes.get("/", getAllUsers);
+userRoutes.get("/", auth, authorize("admin"), getAllUsers);
 
-userRoutes.get("/:id", getUserById);
+userRoutes.get("/:id", auth, authorize("user", "admin"), getUserById);
 
 userRoutes.post("/", createUser);
 
-userRoutes.put("/:id", updateUser);
+userRoutes.put("/:id", auth, authorize("user", "admin"), updateUser);
 
-userRoutes.delete("/:id", deleteUser);
+userRoutes.delete("/:id", auth, authorize("admin"), deleteUser);
 
 userRoutes.post("/login", loginUser);
 

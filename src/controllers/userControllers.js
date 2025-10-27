@@ -2,6 +2,7 @@ import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
+import jwt from "jsonwebtoken";
 
 const saltRounds = parseInt(process.env.SALT_ROUND_HASH);
 
@@ -37,8 +38,8 @@ export const createUser = async (req, res) => {
 
     const newUser = new User({ ...rest, password: hashedPassword });
     const saved = await newUser.save();
-    const { password: _, ...userWithoutPassword } = saved.toObject();
-    res.status(200).json(userWithoutPassword);
+    //const { password: _, ...userWithoutPassword } = saved.toObject();
+    res.status(200).json(saved);
   } catch (error) {
     console.error(error);
     res
@@ -49,10 +50,34 @@ export const createUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const updated = await User.findByIdAndUpdate(req.params.id, req.body, {
+    //console.log(req.user);
+    if (
+      req.user._id.toString() !== req.params.id &&
+      req.user.roleAdmin !== "admin"
+    ) {
+      return res
+        .status(403)
+        .json({ error: "No puedes acceder o modificar otro usuario" });
+    }
+
+    // Filtrar campos permitidos para actualizar
+    const allowedUpdates = ["name", "email", "avatar", "password"];
+    const updates = {};
+    allowedUpdates.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
+    });
+
+    if (updates.password) {
+      updates.password = await bcrypt.hash(updates.password, saltRounds);
+    }
+
+    const updated = await User.findByIdAndUpdate(req.params.id, updates, {
       new: true,
       runValidators: true,
     });
+    console.log(updated);
     return !updated
       ? res.status(404).json({ error: "Usuario no encontrado 😵‍💫" })
       : res.status(200).json(updated);
@@ -78,6 +103,8 @@ export const deleteUser = async (req, res) => {
 };
 
 export const loginUser = async (req, res) => {
+  const secret = process.env.JWT_SECRET;
+  //console.log(secret);
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email }).select("+password");
@@ -95,8 +122,10 @@ export const loginUser = async (req, res) => {
         .json({ message: "Correo o contraseña incorrectos" });
     }
 
+    const token = jwt.sign(user.toObject(), secret, { expiresIn: "1h" });
+    //console.log(token);
     const { password: _, ...userWithoutPassword } = user.toObject();
-    res.status(200).json(userWithoutPassword);
+    res.status(200).json({ userWithoutPassword, token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error en el servidor al iniciar sesión" });
