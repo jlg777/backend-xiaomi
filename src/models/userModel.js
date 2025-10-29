@@ -17,10 +17,14 @@ const userSchema = new mongoose.Schema({
         `${props.value} no es un nombre válido. Solo se permiten letras y espacios.`,
     },
   },
-  avatar: String,
+  avatar: {
+    type: String,
+    default:
+      "https://media.istockphoto.com/id/1204457395/es/vector/no-hay-icono-de-se%C3%B1al-dise%C3%B1o-vectorial-de-c%C3%ADrculo-cruzado-rojo.jpg?s=1024x1024&w=is&k=20&c=77DioSexSmTy5Lr5jKbeJTGmeit-OcgAKNlXdykvvUk=",
+  },
   roleAdmin: {
     type: String,
-    default: "client",
+    default: "user",
     enum: ["admin", "user", "client"],
   },
   email: {
