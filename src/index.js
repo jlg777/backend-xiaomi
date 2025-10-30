@@ -15,6 +15,8 @@ const PORT = process.env.PORT;
 // Middleware (opcional para parsear JSON)
 app.use(json());
 
+app.use("/uploads", express.static("uploads"));
+
 // Conexión a MongoDB Atlas
 mongoose
   .connect("mongodb://localhost:27017")
