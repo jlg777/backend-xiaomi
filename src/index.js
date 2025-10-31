@@ -12,7 +12,7 @@ app.use(cors());
 const PORT = process.env.PORT;
 const MONGO_URI = process.env.MONGO_URI;
 //const MONGO_LOCAL = process.env.MONGO_LOCAL;
-
+console.log(MONGO_URI);
 // Middleware (opcional para parsear JSON)
 app.use(json());
 
