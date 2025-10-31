@@ -10,7 +10,8 @@ app.use(cors());
 
 // Puerto
 const PORT = process.env.PORT;
-//const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = process.env.MONGO_URI;
+//const MONGO_LOCAL = process.env.MONGO_LOCAL;
 
 // Middleware (opcional para parsear JSON)
 app.use(json());
@@ -19,7 +20,7 @@ app.use("/uploads", express.static("uploads"));
 
 // Conexión a MongoDB Atlas
 mongoose
-  .connect("mongodb://localhost:27017")
+  .connect(MONGO_URI)
   .then(() => console.log("✅ Conectado a MongoDB Atlas"))
   .catch((err) => console.error("❌ Error al conectar a MongoDB:", err));
 
