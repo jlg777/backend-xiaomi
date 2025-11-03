@@ -35,11 +35,8 @@ export const createUser = async (req, res) => {
       res.status(400).json({ error: "La contraseña es obligatoria 🔑" });
     }
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const avatar = req.file
-      ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
-      : null;
 
-    const newUser = new User({ ...rest, password: hashedPassword, avatar });
+    const newUser = new User({ ...rest, password: hashedPassword });
     const saved = await newUser.save();
     //const { password: _, ...userWithoutPassword } = saved.toObject();
     res.status(200).json(saved);
@@ -75,7 +72,7 @@ export const updateUser = async (req, res) => {
     if (updates.password) {
       updates.password = await bcrypt.hash(updates.password, saltRounds);
     }
-console.log('user',req.user)
+    //console.log('user',req.user)
     if (req.file) {
       updates.avatar = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
     }
