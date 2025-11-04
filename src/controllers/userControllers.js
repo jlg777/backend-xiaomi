@@ -64,7 +64,8 @@ export const updateUser = async (req, res) => {
     const allowedUpdates = ["name", "email", "avatar", "password"];
     const updates = {};
     allowedUpdates.forEach((field) => {
-      if (req.body[field] !== undefined) {
+      if (req.body[field]) {
+        // esto ignora "", null o undefined
         updates[field] = req.body[field];
       }
     });
@@ -73,15 +74,15 @@ export const updateUser = async (req, res) => {
       updates.password = await bcrypt.hash(updates.password, saltRounds);
     }
     //console.log('user',req.user)
-    if (req.file) {
+    /*if (req.file) {
       updates.avatar = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
-    }
+    }*/
 
     const updated = await User.findByIdAndUpdate(req.params.id, updates, {
       new: true,
       runValidators: true,
     });
-    console.log(updated);
+    //console.log(updated);
     return !updated
       ? res.status(404).json({ error: "Usuario no encontrado 😵‍💫" })
       : res.status(200).json(updated);
