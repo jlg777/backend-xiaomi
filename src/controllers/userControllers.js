@@ -136,3 +136,7 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ message: "Error en el servidor al iniciar sesión" });
   }
 };
+
+export const authUser =  (req, res) => {
+  res.json({ message: "Acceso permitido al usuario", user: req.user });
+} 
