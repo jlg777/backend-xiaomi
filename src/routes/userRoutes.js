@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  authUser,
   createUser,
   deleteUser,
   getAllUsers,
@@ -10,12 +11,14 @@ import {
 import auth from "../middleware/auth.js";
 import authorize from "../middleware/role.js";
 import uploadAvatar from "../middleware/upload.js";
+import { authMiddleware } from "../middleware/authmiddleware.js";
 
 const userRoutes = Router();
+userRoutes.get("/", authMiddleware, auth, authorize("user"), authUser);
 
-userRoutes.get("/", auth, authorize("admin"), getAllUsers);
+userRoutes.get("/all", auth, authorize("admin"), getAllUsers);
 
-userRoutes.get("/:id", auth, authorize("user", "admin"), getUserById);
+userRoutes.get("/all/:id", auth, authorize("user", "admin"), getUserById);
 
 userRoutes.post("/", uploadAvatar.single("avatar"), createUser);
 
