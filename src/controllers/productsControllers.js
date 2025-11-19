@@ -6,7 +6,7 @@ export const getAllProducts = async (_req, res) => {
     const products = await Product.find();
     res.status(200).json(products);
   } catch (error) {
-    console.error(error);
+    console.error("Error al obtener productos 😵‍💫:", error.message);
     res.status(500).json({ error: "Error al obtener productos 😵‍💫" });
   }
 };
@@ -18,7 +18,7 @@ export const getProductById = async (req, res) => {
       return res.status(404).json({ error: "Producto no encontrado 😵‍💫" });
     res.status(200).json(product);
   } catch (error) {
-    console.error(error);
+    console.error("Error al obtener el producto 😵‍💫:", error.message);
     res.status(500).json({ error: "Error al obtener el producto 😵‍💫" });
   }
 };
@@ -29,7 +29,7 @@ export const createProduct = async (req, res) => {
     const saved = await newProduct.save();
     res.status(201).json(saved);
   } catch (error) {
-    console.error(error);
+    console.error("Error al crear el producto 😵‍💫:", error.message);
     res
       .status(400)
       .json({ error: "Error al crear el producto 😵‍💫", details: error.message });
@@ -46,7 +46,7 @@ export const updateProduct = async (req, res) => {
       return res.status(404).json({ error: "Producto no encontrado 😵‍💫" });
     res.json(updated);
   } catch (error) {
-    console.error(error);
+    console.error("Error al actualizar el producto 😵‍💫:", error.message);
     res.status(400).json({
       error: "Error al actualizar el producto 😵‍💫",
       details: error.message,
@@ -61,7 +61,7 @@ export const deleteProduct = async (req, res) => {
       return res.status(404).json({ error: "Producto no encontrado 😵‍💫" });
     res.json({ message: "Producto eliminado correctamente 😵‍💫" });
   } catch (error) {
-    console.error(error);
+    console.error("Error al eliminar el producto 😵‍💫:", error.message);
     res.status(500).json({ error: "Error al eliminar el producto 😵‍💫" });
   }
 };

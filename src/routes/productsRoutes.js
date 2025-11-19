@@ -11,7 +11,7 @@ import authorize from "../middleware/role.js";
 
 const productsRoutes = Router();
 
-productsRoutes.get("/", auth, authorize("admin"), getAllProducts);
+productsRoutes.get("/", /*auth, authorize("admin"),*/ getAllProducts);
 
 productsRoutes.get("/:id",auth, authorize("admin"), getProductById);
 
