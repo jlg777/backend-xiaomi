@@ -1,10 +1,14 @@
 //import { products } from "../mockData/products.js";
 import Product from "../models/productModel.js";
 
-export const getAllProducts = async (_req, res) => {
+export const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find();
-    res.status(200).json(products);
+    console.log("query params", req.query);
+    const { page = 1, limit = 10 } = req.query;
+
+    /* const products = await Product.find();
+    res.status(200).json(products);*/
+    res.status(200).json({ message: "Productos obtenidos", page, limit });
   } catch (error) {
     console.error("Error al obtener productos 😵‍💫:", error.message);
     res.status(500).json({ error: "Error al obtener productos 😵‍💫" });
