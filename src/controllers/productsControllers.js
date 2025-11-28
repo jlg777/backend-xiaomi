@@ -3,12 +3,28 @@ import Product from "../models/productModel.js";
 
 export const getAllProducts = async (req, res) => {
   try {
-    console.log("query params", req.query);
-    const { page = 1, limit = 10 } = req.query;
+    //console.log("query params", req.query);
+    const { page = 1, limit = 1, category = "all" } = req.query;
 
-    /* const products = await Product.find();
-    res.status(200).json(products);*/
-    res.status(200).json({ message: "Productos obtenidos", page, limit });
+    // OBJETO DE FILTRO DINÁMICO
+    let filter = {};
+
+    // FILTRO DE CATEGORÍA
+    if (category !== "all") {
+      filter.category = category;
+    }
+
+    const products = await Product.find(filter)
+      .limit(limit)
+      .skip((page - 1) * limit);
+    const totalProducts = await Product.countDocuments(filter);
+
+    res.status(200).send({
+      products,
+      totalProducts,
+      totalPages: Math.ceil(totalProducts / limit),
+    });
+    //res.status(200).json({ message: "Productos obtenidos", page, limit });
   } catch (error) {
     console.error("Error al obtener productos 😵‍💫:", error.message);
     res.status(500).json({ error: "Error al obtener productos 😵‍💫" });
