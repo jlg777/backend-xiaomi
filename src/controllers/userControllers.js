@@ -137,6 +137,6 @@ export const loginUser = async (req, res) => {
   }
 };
 
-export const authUser =  (req, res) => {
+export const authUser = (req, res) => {
   res.json({ message: "Acceso permitido al usuario", user: req.user });
-} 
+};
