@@ -129,11 +129,12 @@ export const loginUser = async (req, res) => {
 
     const token = jwt.sign(user.toObject(), secret, { expiresIn: "1h" });
     //console.log(token);
-    const { password: _, ...userWithoutPassword } = user.toObject();
+    // eslint-disable-next-line no-unused-vars
+    const { password: __, ...userWithoutPassword } = user.toObject();
     res.status(200).json({ userWithoutPassword, token });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error en el servidor al iniciar sesión" });
+    console.error("Error en el servidor al iniciar sesión", error.message);
+    res.status(500).json({ error: "Error en el servidor al iniciar sesión" });
   }
 };
 
