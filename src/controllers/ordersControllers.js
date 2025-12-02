@@ -85,6 +85,17 @@ export const getOrderById = async (req, res) => {
 
     if (!order) return res.status(404).json({ message: "Orden no encontrada" });
 
+    // 🚨 Verificar si el usuario autenticado puede verla
+    // req.user._id viene del JWT, req.user.roleAdmin indica si es admin
+    if (
+      order.user._id.toString() !== req.user._id.toString() &&
+      req.user.roleAdmin !== "admin"
+    ) {
+      return res
+        .status(403)
+        .json({ message: "No autorizado para ver esta orden" });
+    }
+
     res.json(order);
   } catch (error) {
     console.error("Error al consultar las ordenes 😵‍💫:", error.message);
@@ -95,30 +106,60 @@ export const getOrderById = async (req, res) => {
 export const updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
+    const orderId = req.params.id;
 
-    const order = await Order.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true }
-    );
+    // Buscar la orden
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: "Orden no encontrada" });
+    }
 
-    if (!order) return res.status(404).json({ message: "Orden no encontrada" });
+    // Verificar permisos
+    const isOwner = order.user._id.toString() === req.user._id.toString();
+    const isAdmin = req.user.roleAdmin === "admin";
 
-    res.json(order);
+    if (!isOwner && !isAdmin) {
+      return res
+        .status(403)
+        .json({ message: "No autorizado para actualizar esta orden" });
+    }
+
+    // Actualizar el estado
+    order.status = status;
+    const updatedOrder = await order.save();
+
+    res.json(updatedOrder);
   } catch (error) {
-    console.error("Error al consultar las ordenes 😵‍💫:", error.message);
-    res.status(500).json({ error: "Error al consultar las ordenes 😵‍💫" });
+    console.error("Error al actualizar la orden 😵‍💫:", error.message);
+    res.status(500).json({ error: "Error al actualizar la orden 😵‍💫" });
   }
 };
 
 export const deleteOrder = async (req, res) => {
   try {
-    const order = await Order.findByIdAndDelete(req.params.id);
+    const orderId = req.params.id;
 
-    if (!order) return res.status(404).json({ message: "Orden no encontrada" });
+    // Buscar la orden primero
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: "Orden no encontrada" });
+    }
+
+    // Verificar permisos
+    const isOwner = order.user._id.toString() === req.user._id.toString();
+    const isAdmin = req.user.roleAdmin === "admin";
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: "No autorizado para eliminar esta orden" });
+    }
+
+    // Eliminar la orden
+    await Order.findByIdAndDelete(orderId);
 
     res.json({ message: "Orden eliminada correctamente" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error al eliminar la orden 😵‍💫:", error.message);
+    res.status(500).json({ message: "Error al eliminar la orden 😵‍💫" });
   }
 };
+
