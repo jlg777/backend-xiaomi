@@ -16,7 +16,7 @@ import { authMiddleware } from "../middleware/authmiddleware.js";
 const userRoutes = Router();
 userRoutes.get("/", authMiddleware, auth, authorize("user"), authUser); //authMiddleware valida token
 
-userRoutes.get("/all",/* auth, authorize("admin"),*/ getAllUsers);
+userRoutes.get("/all", auth, authorize("admin"), getAllUsers);
 
 userRoutes.get("/all/:id", auth, authorize("user", "admin"), getUserById);
 

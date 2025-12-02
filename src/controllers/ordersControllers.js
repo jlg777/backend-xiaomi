@@ -11,7 +11,8 @@ import Product from "../models/productModel.js";
 
 export const createOrder = async (req, res) => {
   try {
-    const { user, items, shippingAddress, paymentMethod } = req.body;
+    const userId = req.user._id;
+    const { items, shippingAddress, paymentMethod } = req.body;
 
     // Validación de productos y cálculo de total
     let total = 0;
@@ -37,7 +38,7 @@ export const createOrder = async (req, res) => {
     }
 
     const order = await Order.create({
-      user,
+      user: userId,
       items: processedItems,
       total,
       shippingAddress,
@@ -54,6 +55,19 @@ export const createOrder = async (req, res) => {
 export const getOrders = async (req, res) => {
   try {
     const orders = await Order.find()
+      .populate("user")
+      .populate("items.product");
+    res.json(orders);
+  } catch (error) {
+    console.error("Error al consultar las ordenes 😵‍💫:", error.message);
+    res.status(500).json({ error: "Error al consultar las ordenes 😵‍💫" });
+  }
+};
+
+export const getOrdersUser = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const orders = await Order.find({ user: userId })
       .populate("user")
       .populate("items.product");
     res.json(orders);
@@ -104,7 +118,6 @@ export const deleteOrder = async (req, res) => {
     if (!order) return res.status(404).json({ message: "Orden no encontrada" });
 
     res.json({ message: "Orden eliminada correctamente" });
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
