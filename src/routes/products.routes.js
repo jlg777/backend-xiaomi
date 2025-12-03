@@ -5,7 +5,7 @@ import {
   getAllProducts,
   getProductById,
   updateProduct,
-} from "../controllers/productsControllers.js";
+} from "../controllers/products.controller.js";
 import auth from "../middleware/auth.js";
 import authorize from "../middleware/role.js";
 

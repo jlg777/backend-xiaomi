@@ -7,11 +7,11 @@ import {
   getUserById,
   loginUser,
   updateUser,
-} from "../controllers/userControllers.js";
+} from "../controllers/user.controller.js";
 import auth from "../middleware/auth.js";
 import authorize from "../middleware/role.js";
 import uploadAvatar from "../middleware/upload.js";
-import { authMiddleware } from "../middleware/authmiddleware.js";
+import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const userRoutes = Router();
 userRoutes.get("/", authMiddleware, auth, authorize("user"), authUser); //authMiddleware valida token

@@ -6,7 +6,7 @@ import {
   getOrders,
   getOrdersUser,
   updateOrderStatus,
-} from "../controllers/ordersControllers.js";
+} from "../controllers/orders.controller.js";
 import auth from "../middleware/auth.js";
 import authorize from "../middleware/role.js";
 
