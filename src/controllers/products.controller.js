@@ -1,5 +1,5 @@
 //import { products } from "../mockData/products.js";
-import Product from "../models/productModel.js";
+import Product from "../models/product.model.js";
 
 export const getAllProducts = async (req, res) => {
   try {

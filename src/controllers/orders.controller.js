@@ -6,8 +6,8 @@
 ✅ sistema de carrito (Cart model)
 */
 
-import Order from "../models/orderModel.js";
-import Product from "../models/productModel.js";
+import Order from "../models/order.model.js";
+import Product from "../models/product.model.js";
 
 export const createOrder = async (req, res) => {
   try {
@@ -150,7 +150,9 @@ export const deleteOrder = async (req, res) => {
     const isAdmin = req.user.roleAdmin === "admin";
 
     if (!isOwner && !isAdmin) {
-      return res.status(403).json({ message: "No autorizado para eliminar esta orden" });
+      return res
+        .status(403)
+        .json({ message: "No autorizado para eliminar esta orden" });
     }
 
     // Eliminar la orden
@@ -162,4 +164,3 @@ export const deleteOrder = async (req, res) => {
     res.status(500).json({ message: "Error al eliminar la orden 😵‍💫" });
   }
 };
-
