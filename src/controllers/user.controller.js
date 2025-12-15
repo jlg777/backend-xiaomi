@@ -32,7 +32,7 @@ export const createUser = async (req, res) => {
   try {
     const { password, ...rest } = req.body;
     if (!password) {
-      res.status(400).json({ error: "La contraseña es obligatoria 🔑" });
+      return res.status(400).json({ error: "La contraseña es obligatoria 🔑" });
     }
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -42,9 +42,25 @@ export const createUser = async (req, res) => {
     res.status(200).json(saved);
   } catch (error) {
     console.error(error);
-    res
-      .status(400)
-      .json({ error: "Error al crear el usuario 😵‍💫", details: error.message });
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+
+      return res.status(400).json({
+        errors: messages,
+      });
+    }
+
+    // 🔹 Email duplicado
+    if (error.code === 11000) {
+      return res.status(400).json({
+        error: "El correo ya está registrado 📧",
+      });
+    }
+
+    // 🔹 Error genérico
+    return res.status(500).json({
+      error: "Error al crear el usuario 😵‍💫",
+    });
   }
 };
 
