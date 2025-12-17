@@ -66,12 +66,6 @@ export const createUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    console.log("=== UPDATE USER START ===");
-    console.log("Authenticated user:", req.user);
-    console.log("Request params:", req.params);
-    console.log("Request body:", req.body);
-    console.log("Request URL:", req.originalUrl);
-
     if (
       req.user._id.toString() !== req.params.id &&
       req.user.roleAdmin !== "admin"
@@ -94,7 +88,6 @@ export const updateUser = async (req, res) => {
 
     if (req.file) {
       updates.avatar = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
-      console.log("Avatar actualizado:", updates.avatar);
     }
 
     const updated = await User.findByIdAndUpdate(req.params.id, updates, {
@@ -106,9 +99,6 @@ export const updateUser = async (req, res) => {
       console.log("❌ Usuario no encontrado");
       return res.status(404).json({ error: "Usuario no encontrado 😵‍💫" });
     }
-
-    console.log("✅ Usuario actualizado:", updated);
-    console.log("=== UPDATE USER END ===");
     return res.status(200).json(updated);
   } catch (error) {
     console.error("💥 Error en updateUser:", {
