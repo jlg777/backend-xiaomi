@@ -66,47 +66,61 @@ export const createUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    //console.log(req.user);
+    console.log("=== UPDATE USER START ===");
+    console.log("Authenticated user:", req.user);
+    console.log("Request params:", req.params);
+    console.log("Request body:", req.body);
+    console.log("Request URL:", req.originalUrl);
+
     if (
       req.user._id.toString() !== req.params.id &&
       req.user.roleAdmin !== "admin"
     ) {
+      console.log("⚠️ Intento de actualizar otro usuario");
       return res
         .status(403)
         .json({ error: "No puedes acceder o modificar otro usuario" });
     }
 
-    // Filtrar campos permitidos para actualizar
     const allowedUpdates = ["name", "email", "avatar", "password"];
     const updates = {};
     allowedUpdates.forEach((field) => {
-      if (req.body[field]) {
-        // esto ignora "", null o undefined
-        updates[field] = req.body[field];
-      }
+      if (req.body[field]) updates[field] = req.body[field];
     });
 
     if (updates.password) {
       updates.password = await bcrypt.hash(updates.password, saltRounds);
     }
-    //console.log('user',req.user)
-    /*if (req.file) {
+
+    if (req.file) {
       updates.avatar = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
-    }*/
+      console.log("Avatar actualizado:", updates.avatar);
+    }
 
     const updated = await User.findByIdAndUpdate(req.params.id, updates, {
       new: true,
       runValidators: true,
     });
-    //console.log(updated);
-    return !updated
-      ? res.status(404).json({ error: "Usuario no encontrado 😵‍💫" })
-      : res.status(200).json(updated);
+
+    if (!updated) {
+      console.log("❌ Usuario no encontrado");
+      return res.status(404).json({ error: "Usuario no encontrado 😵‍💫" });
+    }
+
+    console.log("✅ Usuario actualizado:", updated);
+    console.log("=== UPDATE USER END ===");
+    return res.status(200).json(updated);
   } catch (error) {
-    console.error(error);
-    res.status(400).json({
+    console.error("💥 Error en updateUser:", {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+    });
+
+    return res.status(400).json({
       error: "Error al actualizar el usuario 😵‍💫",
       details: error.message,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
     });
   }
 };
