@@ -147,9 +147,14 @@ export const loginUser = async (req, res) => {
         .json({ message: "Correo o contraseña incorrectos" });
     }
 
-    const token = jwt.sign(user.toObject(), secret, { expiresIn: "1h" });
-    //console.log(token);
-    // eslint-disable-next-line no-unused-vars
+    const payload = {
+      id: user._id,
+      email: user.email,
+      roleAdmin: user.roleAdmin,
+    };
+
+    const token = jwt.sign(payload, secret, { expiresIn: "1h" });
+    
     const { password: __, ...userWithoutPassword } = user.toObject();
     res.status(200).json({ userWithoutPassword, token });
   } catch (error) {
