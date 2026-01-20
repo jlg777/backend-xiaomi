@@ -14,7 +14,7 @@ import uploadAvatar from "../middleware/upload.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const userRoutes = Router();
-userRoutes.get("/", authMiddleware, auth, authorize("user"), authUser); //authMiddleware valida token
+userRoutes.get("/", authMiddleware, auth, authorize("user", "admin"), authUser); //authMiddleware valida token
 
 userRoutes.get("/all", auth, authorize("admin"), getAllUsers);
 
