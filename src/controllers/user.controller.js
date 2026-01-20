@@ -149,6 +149,7 @@ export const loginUser = async (req, res) => {
 
     const payload = {
       id: user._id,
+      name: user.name,
       email: user.email,
       roleAdmin: user.roleAdmin,
     };
@@ -156,7 +157,7 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign(payload, secret, { expiresIn: "1h" });
     
     const { password: __, ...userWithoutPassword } = user.toObject();
-    res.status(200).json({ userWithoutPassword, token });
+    res.status(200).json({ user:userWithoutPassword, token });
   } catch (error) {
     console.error("Error en el servidor al iniciar sesión", error.message);
     res.status(500).json({ error: "Error en el servidor al iniciar sesión" });
