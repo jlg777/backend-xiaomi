@@ -67,7 +67,7 @@ export const createUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     if (
-      req.user._id.toString() !== req.params.id &&
+      req.user.id.toString() !== req.params.id &&
       req.user.roleAdmin !== "admin"
     ) {
       console.log("⚠️ Intento de actualizar otro usuario");
