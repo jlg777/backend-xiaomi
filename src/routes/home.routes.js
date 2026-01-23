@@ -2,6 +2,7 @@ import { Router } from "express";
 import productsRoutes from "./products.routes.js";
 import userRoutes from "./user.routes.js";
 import orderRoutes from "./order.routes.js";
+import testErrorsRoutes from "./testErrors.routes.js";
 
 const router = Router();
 
@@ -14,6 +15,6 @@ router.get("/", (_req, res) => {
 router.use("/products", productsRoutes);
 router.use("/user", userRoutes);
 router.use("/order", orderRoutes);
-
+router.use("/test-errors", testErrorsRoutes);
 
 export default router;
