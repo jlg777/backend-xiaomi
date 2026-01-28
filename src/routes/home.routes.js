@@ -14,7 +14,7 @@ router.get("/", (_req, res) => {
 //subrutas
 router.use("/products", productsRoutes);
 router.use("/user", userRoutes);
-router.use("/order", orderRoutes);
+router.use("/orders", orderRoutes);
 router.use("/test-errors", testErrorsRoutes);
 
 export default router;
