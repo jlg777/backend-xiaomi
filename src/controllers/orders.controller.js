@@ -11,7 +11,9 @@ import Product from "../models/product.model.js";
 
 export const createOrder = async (req, res) => {
   try {
+    console.log("req.user completo:", req.user);
     const userId = req.user.id;
+    console.log("userId extraído:", userId);
     const { items, shippingAddress, paymentMethod } = req.body;
 
     // Validación de productos y cálculo de total
