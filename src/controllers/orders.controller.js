@@ -11,7 +11,7 @@ import Product from "../models/product.model.js";
 
 export const createOrder = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     const { items, shippingAddress, paymentMethod } = req.body;
 
     // Validación de productos y cálculo de total
@@ -69,7 +69,7 @@ export const getOrders = async (req, res) => {
 
 export const getOrdersUser = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     const orders = await Order.find({ user: userId })
       .populate("user")
       .populate("items.product");
@@ -89,9 +89,9 @@ export const getOrderById = async (req, res) => {
     if (!order) return res.status(404).json({ message: "Orden no encontrada" });
 
     // 🚨 Verificar si el usuario autenticado puede verla
-    // req.user._id viene del JWT, req.user.roleAdmin indica si es admin
+    // req.user.id viene del JWT, req.user.roleAdmin indica si es admin
     if (
-      order.user._id.toString() !== req.user._id.toString() &&
+      order.user._id.toString() !== req.user.id.toString() &&
       req.user.roleAdmin !== "admin"
     ) {
       return res
@@ -118,7 +118,7 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     // Verificar permisos
-    const isOwner = order.user._id.toString() === req.user._id.toString();
+    const isOwner = order.user._id.toString() === req.user.id.toString();
     const isAdmin = req.user.roleAdmin === "admin";
 
     if (!isOwner && !isAdmin) {
@@ -149,7 +149,7 @@ export const deleteOrder = async (req, res) => {
     }
 
     // Verificar permisos
-    const isOwner = order.user._id.toString() === req.user._id.toString();
+    const isOwner = order.user._id.toString() === req.user.id.toString();
     const isAdmin = req.user.roleAdmin === "admin";
 
     if (!isOwner && !isAdmin) {
