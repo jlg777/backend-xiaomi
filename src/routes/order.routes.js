@@ -16,7 +16,7 @@ orderRoutes.post("/", auth, authorize("user", "admin"), createOrder);
 orderRoutes.get("/users", auth, authorize("admin"), getOrders);
 orderRoutes.get("/user", auth, authorize("user", "admin"), getOrdersUser);
 orderRoutes.get("/:id", auth, authorize("user", "admin"), getOrderById);
-orderRoutes.put("/:id", auth, authorize("user", "admin"), updateOrderStatus);
+orderRoutes.put("/:id", auth, authorize("admin"), updateOrderStatus);
 orderRoutes.delete("/:id", auth, authorize("user", "admin"), deleteOrder);
 
 export default orderRoutes;

@@ -1,11 +1,3 @@
-/*
-✅ endpoints REST para crear órdenes
-✅ endpoint para obtener el historial del usuario
-✅ endpoint admin para ver todos los pedidos
-✅ validación de stock
-✅ sistema de carrito (Cart model)
-*/
-
 import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 
@@ -120,13 +112,31 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     // Verificar permisos
-    const isOwner = order.user._id.toString() === req.user.id.toString();
     const isAdmin = req.user.roleAdmin === "admin";
 
-    if (!isOwner && !isAdmin) {
+    if (!isAdmin) {
       return res
         .status(403)
         .json({ message: "No autorizado para actualizar esta orden" });
+    }
+
+// Estados permitidos
+    const transitions = {
+      pending: ["paid", "cancelled"],
+      paid: ["shipped", "cancelled"],
+      shipped: ["delivered"],
+      delivered: [],
+      cancelled: [],
+    };
+
+    // Estado actual no permite cambios
+    if (!transitions[order.status] || transitions[order.status].length === 0) {
+      return res.status(400).json({ message: "La orden ya está finalizada" });
+    }
+
+    // Transición inválida
+    if (!transitions[order.status].includes(status)) {
+      return res.status(400).json({ message: "Transición de estado inválida" });
     }
 
     // Actualizar el estado
