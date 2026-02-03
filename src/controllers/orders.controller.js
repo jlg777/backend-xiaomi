@@ -120,7 +120,7 @@ export const updateOrderStatus = async (req, res) => {
         .json({ message: "No autorizado para actualizar esta orden" });
     }
 
-// Estados permitidos
+    // Estados permitidos
     const transitions = {
       pending: ["paid", "cancelled"],
       paid: ["shipped", "cancelled"],
