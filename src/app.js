@@ -17,8 +17,6 @@ app.use(
   }),
 );
 
-app.options("/*", cors());
-
 app.use(json());
 
 app.use("/", router);
