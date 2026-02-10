@@ -1,4 +1,4 @@
-# backend-xiaomi
+﻿# backend-xiaomi
 
 <div>
   <p style="text-align:center">
@@ -24,16 +24,55 @@
 
 # Digitalers Xiaomi Backend
 
-**backend-xiaomi** es una API REST desarrollada con **Node.js**, **Express** y **MongoDB** (Mongoose), pensada para gestionar productos y usuarios del ecosistema Xiaomi.
+**backend-xiaomi** es una API REST desarrollada con **Node.js**, **Express 5** y **MongoDB** (Mongoose). Incluye autenticación con JWT, roles, gestión de productos, usuarios y órdenes, más carga de avatars.
 
 ## 🚀 Características
 
-- API RESTful para productos y usuarios.
+- API RESTful para productos, usuarios y órdenes.
+- Autenticación con JWT y control de roles (admin/user).
 - CRUD completo para productos y usuarios.
-- Uso de mockData y modelos Mongoose.
-- Rutas organizadas por recursos.
-- Conexión a MongoDB Atlas (configurable).
-- Estructura modular y escalable.
+- Creación y gestión de órdenes con estados.
+- Paginación y filtro por categoría en productos.
+- Upload de avatar con Multer.
+- Conexión a MongoDB Atlas (configurable por .env).
+- Rutas organizadas por recursos y middlewares.
+
+## 🧰 Requisitos
+
+- Node.js 18+ (recomendado)
+- MongoDB Atlas o local
+- npm
+
+## ⚙️ Instalación y ejecución
+
+1. Instalar dependencias:
+
+```bash
+npm install
+```
+
+2. Crear `.env` en la raíz del proyecto con estas variables:
+
+```env
+PORT=3000
+MONGO_URI=mongodb+srv://usuario:password@cluster/tu_db
+SALT_ROUND_HASH=10
+JWT_SECRET=tu_clave_secreta
+MONGO_LOCAL=mongodb://localhost:27017
+```
+
+3. Ejecutar en desarrollo:
+
+```bash
+npm start
+```
+
+## 🧪 Scripts
+
+- `npm start` inicia el servidor con nodemon.
+- `npm run lint` ejecuta eslint en `src/**/*.js`.
+- `npm run lint:fix` corrige issues automáticos de eslint.
+- `npm run format` ejecuta prettier sobre `src/**/*.js`.
 
 ## 📁 Estructura de carpetas
 
@@ -41,43 +80,148 @@
 backend-xiaomi/
 │
 ├── src/
+│   ├── config/
+│   │   ├── db.js
+│   │   └── server.js
 │   ├── controllers/
-│   ├── mockData/
+│   ├── middleware/
+│   ├── mock/
 │   ├── models/
 │   ├── postman/
-│   └── routes/
+│   ├── routes/
+│   ├── app.js
 │   └── index.js
+├── uploads/
 ├── .env
-├── .gitignore
-├── LICENSE
 ├── package.json
 ├── README.md
 └── .vscode/
 ```
 
-## 💡 Próximas mejoras
+## 🚦 Autenticación
 
-- Autenticación y autorización de usuarios.
-- Validaciones avanzadas.
-- Tests automatizados.
-- Documentación con Swagger.
-- Integración con frontend.
+- Header requerido: `Authorization: Bearer <token>`
+- El token se obtiene en `POST /user/login`.
+- Roles usados en el token: `admin` y `user` (también existe `client` a nivel de modelo, no habilitado en rutas).
 
-## 🛠 Tecnologías usadas
+## 📸 Endpoints
 
-- Node.js
-- Express 5
-- MongoDB Atlas
-- Mongoose
-- Dotenv
-- Nodemon
+**Base**
 
-## 📸 Peticiones HTTP
+| Método | Ruta | Descripción |
+| --- | --- | --- |
+| GET | `/` | Health check: "Servidor funcionando correctamente". |
 
-Puedes importar la colección [src/postman/digitalers.postman_collection.json](src/postman/digitalers.postman_collection.json) en Postman para probar los endpoints.
+**Usuarios**
+
+| Método | Ruta | Auth/Rol | Descripción |
+| --- | --- | --- | --- |
+| GET | `/user` | Bearer | Valida token y devuelve `req.user`. |
+| GET | `/user/all` | admin | Lista todos los usuarios. |
+| GET | `/user/all/:id` | user/admin | Devuelve un usuario por id. |
+| POST | `/user` | Público | Crea usuario (admite avatar). |
+| PUT | `/user/:id` | user/admin | Actualiza usuario (name, email, password, avatar). |
+| DELETE | `/user/:id` | admin | Elimina usuario. |
+| POST | `/user/login` | Público | Login y emisión de JWT. |
+
+**Productos**
+
+| Método | Ruta | Auth/Rol | Descripción |
+| --- | --- | --- | --- |
+| GET | `/products` | Público | Lista productos con paginado y filtro. |
+| GET | `/products/:id` | admin | Producto por id. |
+| POST | `/products` | admin | Crear producto. |
+| PUT | `/products/:id` | admin | Actualizar producto. |
+| DELETE | `/products/:id` | admin | Eliminar producto. |
+
+**Órdenes**
+
+| Método | Ruta | Auth/Rol | Descripción |
+| --- | --- | --- | --- |
+| POST | `/orders` | user/admin | Crear orden. |
+| GET | `/orders/users` | admin | Listar todas las órdenes. |
+| GET | `/orders/user` | user/admin | Órdenes del usuario autenticado. |
+| GET | `/orders/:id` | user/admin | Orden por id (solo owner/admin). |
+| PUT | `/orders/:id` | admin | Actualizar estado de orden. |
+| DELETE | `/orders/:id` | user/admin | Eliminar orden (owner/admin). |
+
+**Errores de prueba**
+
+| Método | Ruta | Descripción |
+| --- | --- | --- |
+| GET | `/test-errors/401` | Respuesta 401. |
+| GET | `/test-errors/403` | Respuesta 403. |
+| GET | `/test-errors/404` | Respuesta 404. |
+| GET | `/test-errors/500` | Respuesta 500. |
+
+## 🧾 Paginación y filtros (productos)
+
+- `GET /products?page=1&limit=10&category=Smartphones`
+- `category` acepta: `Smartphones`, `Wearables`, `Accessories`, `Home Appliances`, `Electronics`.
+- `page` y `limit` por defecto: `1`.
+
+## 📦 Órdenes: reglas de estado
+
+Transiciones válidas: `pending -> paid/cancelled`, `paid -> shipped/cancelled`, `shipped -> delivered`. Los estados `delivered` y `cancelled` no aceptan cambios.
+
+## 📤 Subida de avatar
+
+Usar `multipart/form-data` con el campo `avatar` en:
+
+- `POST /user`
+- `PUT /user/:id`
+
+Los archivos se guardan en `uploads/`.
+
+## 🌐 CORS
+
+Orígenes habilitados:
+
+- `http://localhost:5173`
+- `http://127.0.0.1:5173`
+- `https://fronten-xiaomi-react.vercel.app`
+
+## 🧩 Modelos (resumen)
+
+**Producto**
+
+| Campo | Tipo | Notas |
+| --- | --- | --- |
+| name | string | Requerido, único, 3-100 chars. |
+| image | string | Opcional, tiene default. |
+| price | number | Requerido, min 0. |
+| category | string | Enum: Smartphones, Wearables, Accessories, Home Appliances, Electronics. |
+| description | string | Requerido, 10-2000 chars. |
+| createdAt | date | Auto. |
+
+**Usuario**
+
+| Campo | Tipo | Notas |
+| --- | --- | --- |
+| name | string | Requerido, solo letras y espacios. |
+| avatar | string | Opcional, tiene default. |
+| roleAdmin | string | Enum: admin, user, client. |
+| email | string | Requerido, único. |
+| password | string | Requerido, hasheado. |
+| createdAt | date | Auto. |
+
+**Orden**
+
+| Campo | Tipo | Notas |
+| --- | --- | --- |
+| user | ObjectId | Ref: user. |
+| items | array | `{ product, quantity, priceAtPurchase }`. |
+| total | number | Requerido, min 0. |
+| status | string | Enum: pending, paid, shipped, delivered, cancelled. |
+| paymentMethod | string | Enum: card, paypal, cash, transfer. |
+| shippingAddress | object | `{ street, city, zip, country }`. |
+| createdAt | date | Auto. |
+
+## 📸 Postman
+
+Puedes importar la colección `src/postman/digitalers.postman_collection.json` en Postman para probar los endpoints.
 
 ---
-
 ## ✒️ Autor
 
 **Jorge Grandía** - [JLG777](https://github.com/jlg777)
