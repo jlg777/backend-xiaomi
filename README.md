@@ -22,7 +22,7 @@
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-LinkedIn?style=white&logo=LinkedIn&logoColor=white&color=%230A66C2)](https://linkedin.com/in/)
 [![Discord](https://img.shields.io/badge/Discord-Discord?style=white&logo=Discord&logoColor=white&color=%235865F2)](https://discordapp.com/users/jorgeg777#9720)
 
-# Digitalers Xiaomi Backend
+# Xiaomi Backend
 
 **backend-xiaomi** es una API REST desarrollada con **Node.js**, **Express 5** y **MongoDB** (Mongoose). Incluye autenticación con JWT, roles, gestión de productos, usuarios y órdenes, más carga de avatars.
 
